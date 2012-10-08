@@ -47,7 +47,7 @@ public class Parsers {
     };
 
     public static Parser newParser(Parser.Config cfg) {
-        return new ParserImpl(cfg, new Scanner(cfg));
+        return new ParserImpl(cfg);
     }
 
     static final int BUFFER_SIZE = 4096;
@@ -65,76 +65,6 @@ public class Parsers {
         return b;
     }
 
-    public static Parseable newParseable(final CharSequence cs) {
-        return new Parseable() {
-            int i = 0;
-
-            public void close() throws IOException {
-            }
-
-            public int read() throws IOException {
-                try {
-                    return cs.charAt(i++);
-                } catch (IndexOutOfBoundsException _) {
-                    return -1;
-                }
-            }
-
-            public void unread() throws IOException {
-                i--;
-            }
-        };
-    }
-
-    public static Parseable newParseable(final Readable r) {
-        return new Parseable() {
-            CharBuffer buff = emptyBuffer();
-            int curr = Integer.MIN_VALUE;
-            boolean unread = false;
-            boolean end = false;
-            boolean closed = false;
-
-            public void close() throws IOException {
-                closed = true;
-                if (r instanceof Closeable) {
-                    ((Closeable) r).close();
-                }
-            }
-
-            public int read() throws IOException {
-                if (closed) {
-                    throw new IOException("Can not read from closed Parseable");
-                }
-                if (unread) {
-                    unread = false;
-                    return curr;
-                }
-                if (end) {
-                    return curr = -1;
-                }
-                try {
-                    return curr = buff.get();
-                } catch (BufferUnderflowException _) {
-                    if (readIntoBuffer(buff, r)) {
-                        return curr = buff.get();
-                    } else {
-                        end = true;
-                        return curr = -1;
-                    }
-                }
-            }
-
-            public void unread() throws IOException {
-                if (unread) {
-                    throw new IOException("Can't unread after unread.");
-                }
-                if (curr == Integer.MIN_VALUE) {
-                    throw new IOException("Can't unread before read.");
-                }
-                unread = true;
-            }
-        };
-    }
 
     /**
      * Return a PushbackReader (size 1) for the given Readable.

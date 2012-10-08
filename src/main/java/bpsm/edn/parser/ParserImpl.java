@@ -21,39 +21,33 @@ class ParserImpl implements Parser {
     };
 
     private Config cfg;
-    private Scanner scanner;
-
-    ParserImpl(Config cfg, Scanner scanner) {
-        this.scanner = scanner;
-        this.cfg = cfg;
+  
+    ParserImpl(Config cfg) {
+         this.cfg = cfg;
     }
 
-    public Object nextValue(Parseable pbr) {
-        return nextValue(nextToken(pbr), pbr, false);
+    public Object nextValue(Scanner scanner) {
+        return nextValue(scanner.nextToken(),scanner,false);
     }
 
-    private Object nextToken(Parseable pbr) {
-        try {
-            return scanner.nextToken(pbr);
-        } catch (IOException e) {
-            throw new EdnIOException(e);
-        }
+    private Object nextToken(Scanner scanner) {
+        return scanner.nextToken();
     }
 
-    private Object nextValue(Object curr, Parseable pbr, boolean discard) {
+    private Object nextValue(Object curr, Scanner scanner, boolean discard) {
         if (curr instanceof Token) {
             switch ((Token) curr) {
             case BEGIN_LIST:
-                return parseIntoCollection(cfg.getListFactory(), END_LIST, nextToken(pbr), pbr, discard);
+                return parseIntoCollection(cfg.getListFactory(), END_LIST, nextToken(scanner), scanner, discard);
             case BEGIN_VECTOR:
-                return parseIntoCollection(cfg.getVectorFactory(), END_VECTOR, nextToken(pbr), pbr, discard);
+                return parseIntoCollection(cfg.getVectorFactory(), END_VECTOR, nextToken(scanner), scanner, discard);
             case BEGIN_SET:
-                return parseIntoCollection(cfg.getSetFactory(), END_MAP_OR_SET, nextToken(pbr), pbr, discard);
+                return parseIntoCollection(cfg.getSetFactory(), END_MAP_OR_SET, nextToken(scanner), scanner, discard);
             case BEGIN_MAP:
-                return parseIntoMap(cfg.getMapFactory(), nextToken(pbr), pbr, discard);
+                return parseIntoMap(cfg.getMapFactory(), nextToken(scanner), scanner, discard);
             case DISCARD:
-                nextValue(nextToken(pbr), pbr, true);
-                return nextValue(nextToken(pbr), pbr, discard);
+                nextValue(nextToken(scanner), scanner, true);
+                return nextValue(nextToken(scanner), scanner, discard);
             case NIL:
                 return null;
             case END_OF_INPUT:
@@ -66,14 +60,14 @@ class ParserImpl implements Parser {
                 throw new EdnException("Unrecognized Token: " + curr);
             }
         } else if (curr instanceof Tag) {
-            return nextValue((Tag)curr, nextToken(pbr), pbr, discard);
+            return nextValue((Tag)curr, nextToken(scanner), scanner, discard);
         } else {
             return curr;
         }
     }
 
-    private Object nextValue(Tag t, Object curr, Parseable pbr, boolean discard) {
-        Object v = nextValue(curr, pbr, discard);
+    private Object nextValue(Tag t, Object curr, Scanner scanner, boolean discard) {
+        Object v = nextValue(curr, scanner, discard);
         if (discard) {
             // It doesn't matter what we return here, as it will be discarded.
             return DISCARDED_VALUE;
@@ -82,10 +76,10 @@ class ParserImpl implements Parser {
         return x != null ? x.transform(t, v) : newTaggedValue(t, v);
     }
 
-    private Object parseIntoMap(CollectionBuilder.Factory f, Object curr, Parseable pbr, boolean discard) {
+    private Object parseIntoMap(CollectionBuilder.Factory f, Object curr, Scanner scanner, boolean discard) {
         CollectionBuilder b = !discard ? f.builder() : null;
         while (curr != END_MAP_OR_SET) {
-            Object o = nextValue(curr, pbr, discard);
+            Object o = nextValue(curr, scanner, discard);
             if (o == END_OF_INPUT) {
                 throw new EdnException("Expected '}', but found end of input.\n" +
                         String.valueOf(b.build()));
@@ -93,22 +87,22 @@ class ParserImpl implements Parser {
             if (!discard) {
                 b.add(o);
             }
-            curr = nextToken(pbr);
+            curr = nextToken(scanner);
         }
         return (!discard) ? b.build() : null;
     }
 
-    private Object parseIntoCollection(CollectionBuilder.Factory f, Token end, Object curr, Parseable pbr, boolean discard) {
+    private Object parseIntoCollection(CollectionBuilder.Factory f, Token end, Object curr, Scanner scanner, boolean discard) {
         CollectionBuilder b = !discard ? f.builder() : null;
         while (curr != end) {
-            Object value = nextValue(curr, pbr, discard);
+            Object value = nextValue(curr, scanner, discard);
             if (value == END_OF_INPUT) {
                 throw new EdnException();
             }
             if (!discard) {
                 b.add(value);
             }
-            curr = nextToken(pbr);
+            curr = scanner.nextToken();
         }
         return !discard ? b.build() : null;
     }

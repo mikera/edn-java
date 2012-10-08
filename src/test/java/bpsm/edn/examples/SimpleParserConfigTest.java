@@ -1,7 +1,6 @@
 // (c) 2012 B Smith-Mannschott -- Distributed under the Eclipse Public License
 package bpsm.edn.examples;
 
-import static bpsm.edn.parser.Parsers.newParseable;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -13,9 +12,9 @@ import java.util.TreeSet;
 import org.junit.Test;
 
 import bpsm.edn.parser.CollectionBuilder;
-import bpsm.edn.parser.Parseable;
 import bpsm.edn.parser.Parser;
 import bpsm.edn.parser.Parsers;
+import bpsm.edn.parser.Scanner;
 
 public class SimpleParserConfigTest {
     @Test
@@ -31,7 +30,7 @@ public class SimpleParserConfigTest {
                     };
                 }
             }).build();
-        Parseable pbr = newParseable("#{1 0 2 9 3 8 4 7 5 6}");
+        Scanner pbr = new Scanner(cfg,"#{1 0 2 9 3 8 4 7 5 6}");
         Parser p = Parsers.newParser(cfg);
         SortedSet<?> s = (SortedSet<?>) p.nextValue(pbr);
         // The elements of s are sorted since our SetFactory

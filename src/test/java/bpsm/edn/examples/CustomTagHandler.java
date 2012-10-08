@@ -11,9 +11,9 @@ import org.junit.Test;
 
 import bpsm.edn.Symbol;
 import bpsm.edn.Tag;
-import bpsm.edn.parser.Parseable;
 import bpsm.edn.parser.Parser;
 import bpsm.edn.parser.Parsers;
+import bpsm.edn.parser.Scanner;
 import bpsm.edn.parser.TagHandler;
 
 public class CustomTagHandler {
@@ -28,8 +28,8 @@ public class CustomTagHandler {
                         }
                     }).build();
         Parser p = Parsers.newParser(cfg);
-        Parseable pbr = Parsers.newParseable(
+        Scanner s = new Scanner(cfg,
                 "#bpsm/uri \"http://example.com\"");
-        assertEquals(new URI("http://example.com"), p.nextValue(pbr));
+        assertEquals(new URI("http://example.com"), p.nextValue(s));
     }
 }

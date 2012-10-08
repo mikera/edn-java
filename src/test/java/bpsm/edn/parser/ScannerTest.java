@@ -259,7 +259,7 @@ public class ScannerTest {
             "true false nil \\#{:keyword  [1 2N 3.0 4.0M]}symbol\n" +
             "\\newline \"some text\"\\x ; another comment\n" +
             "() #{-42}";
-        Parseable pbr = Parsers.newParseable(txt);
+        Scanner s = new Scanner(txt);
         Object[] expected = {
             true, false, Token.NIL, '#',
             Token.BEGIN_MAP, key("keyword"),
@@ -270,9 +270,8 @@ public class ScannerTest {
             Token.BEGIN_SET, -42L, Token.END_MAP_OR_SET,
             Token.END_OF_INPUT
         };
-        Scanner s = scanner();
         for (Object o: expected) {
-            assertEquals(o, s.nextToken(pbr));
+            assertEquals(o, s.nextToken());
         }
     }
 
@@ -282,16 +281,8 @@ public class ScannerTest {
     }
 
     static Object scan(String input) {
-        Parseable pbr = Parsers.newParseable(input);
-        try {
-            return scanner().nextToken(pbr);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    static Scanner scanner() {
-        return new Scanner(Parsers.defaultConfiguration());
+        Scanner s = new Scanner(input);
+        return s.nextToken();
     }
 
     static Symbol sym(String name) {

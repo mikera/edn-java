@@ -11,14 +11,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import bpsm.edn.parser.Parseable;
 import bpsm.edn.parser.Parser;
 import bpsm.edn.parser.Parsers;
+import bpsm.edn.parser.Scanner;
 
 public class ParseASingleMapTest {
     @Test
     public void simpleUsageExample() throws IOException {
-        Parseable pbr = Parsers.newParseable("{:x 1, :y 2}");
+        Scanner pbr = new Scanner(defaultConfiguration(),"{:x 1, :y 2}");
         Parser p = Parsers.newParser(defaultConfiguration());
         Map<?, ?> m = (Map<?, ?>) p.nextValue(pbr);
         assertEquals(m.get(newKeyword(newSymbol(null, "x"))), 1L);

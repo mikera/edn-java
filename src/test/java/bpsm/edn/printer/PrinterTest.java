@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 
-import bpsm.edn.parser.Parseable;
 import bpsm.edn.parser.Parser;
 import bpsm.edn.parser.Parsers;
+import bpsm.edn.parser.Scanner;
 
 public class PrinterTest {
 
@@ -65,8 +65,8 @@ public class PrinterTest {
 
     void assertRoundTrip(String ednText) {
         Parser parser;
-        Parseable pbr;
-        pbr = Parsers.newParseable(ednText);
+        Scanner pbr;
+        pbr = new Scanner(ednText);
         parser = Parsers.newParser(Parsers.defaultConfiguration());
         Object originalParsedValue = parser.nextValue(pbr);
 
@@ -75,7 +75,7 @@ public class PrinterTest {
         ew.printValue(originalParsedValue);
         ew.close();
 
-        pbr = Parsers.newParseable(sw.toString());
+        pbr = new Scanner(sw.toString());
         parser = Parsers.newParser(Parsers.defaultConfiguration());
         Object secondGenerationParsedValue = parser.nextValue(pbr);
         assertEquals("'" + ednText + "' => '" + sw.toString()

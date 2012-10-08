@@ -9,9 +9,9 @@ import java.math.BigInteger;
 import org.junit.Test;
 
 import bpsm.edn.Tag;
-import bpsm.edn.parser.Parseable;
 import bpsm.edn.parser.Parser;
 import bpsm.edn.parser.Parsers;
+import bpsm.edn.parser.Scanner;
 import bpsm.edn.parser.TagHandler;
 
 public class CustomLongHandler {
@@ -30,8 +30,8 @@ public class CustomLongHandler {
                     }
                 }).build();
         Parser p = Parsers.newParser(cfg);
-        Parseable pbr = Parsers.newParseable("1024, 2147483648");
-        assertEquals(1024, p.nextValue(pbr));
-        assertEquals(BigInteger.valueOf(2147483648L), p.nextValue(pbr));
+        Scanner scanner = new Scanner(cfg, "1024, 2147483648");
+        assertEquals(1024, p.nextValue(scanner));
+        assertEquals(BigInteger.valueOf(2147483648L), p.nextValue(scanner));
     }
 }

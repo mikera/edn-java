@@ -27,6 +27,22 @@ public class CustomParserTest {
         assertEquals(5,(long)v.get(4));    
     }
 	
+	@Test 
+	public void testArrayParser() {
+        CustomParser<Long[]> p = new CustomParsers.ArrayParser<Long>(new CustomParsers.LongParser()) {
+			@Override
+			public Long[] createArray(int size) {
+				return new Long[size];
+			}
+		};
+        Parseable r = Parsers.newParseable("[1 2 3 4 5]");
+        
+        Long[] v=p.nextValue(r);
+        assertEquals(5,v.length);
+        assertEquals(1L,(long)v[0]);
+        assertEquals(5L,(long)v[4]);    
+    }
+	
 	
 	@Test 
 	public void testMapParser() {

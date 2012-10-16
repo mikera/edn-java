@@ -1,5 +1,6 @@
 package us.bpsm.edn.parser.custom;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,7 @@ import us.bpsm.edn.parser.Parseable;
 import us.bpsm.edn.parser.Token;
 
 public class CustomParsers {
-	
+
 
 	/**
 	 * VectorParser parses a vector of identical sub-items into a java.util.List
@@ -88,6 +89,33 @@ public class CustomParsers {
 		}
 		
 		public abstract T construct(Map<?,?> data);
+	}
+	
+	
+
+	public static abstract class ArrayParser<T> extends AbstractCustomParser<T[]> {
+		private AbstractCustomParser<?> elementParser;
+
+		public <K> ArrayParser(AbstractCustomParser<K> elementParser) {
+			this.elementParser = elementParser;
+		}
+		
+		public T[] nextValue(Object token, Parseable pbr) {
+			if (token != Token.BEGIN_VECTOR) {
+				throw new EdnException("Not the start of a vector: " + token);
+			}
+			token = nextToken(pbr);
+
+			ArrayList<Object> al = new ArrayList<Object>();
+			while (token != Token.END_VECTOR) {
+				Object value = elementParser.nextValue(token, pbr);
+				al.add(value);
+				token = nextToken(pbr);
+			}	
+			return al.toArray(createArray(al.size()));
+		}
+		
+		public abstract T[] createArray(int size);
 	}
 	
 	/**

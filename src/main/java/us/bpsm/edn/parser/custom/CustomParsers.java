@@ -19,7 +19,7 @@ public class CustomParsers {
 	 * 
 	 * @param <T>
 	 */
-	public class VectorParser<T> extends AbstractCustomParser<List<T>> {
+	public static class VectorParser<T> extends AbstractCustomParser<List<T>> {
 		private AbstractCustomParser<T> elementParser;
 
 		public VectorParser(AbstractCustomParser<T> elementParser) {
@@ -37,6 +37,7 @@ public class CustomParsers {
 			while (token != Token.END_VECTOR) {
 				T value = elementParser.nextValue(token, pbr);
 				al.add(value);
+				token = nextToken(pbr);
 			}
 
 			return al;
@@ -51,7 +52,7 @@ public class CustomParsers {
 	 * @param <T>
 	 * @param <K>
 	 */
-	public abstract class MapParser<T> extends AbstractCustomParser<T> {
+	public static abstract class MapParser<T> extends AbstractCustomParser<T> {
 		private Map<?,CustomParser<?>> parsers;
 
 		public MapParser(Map<?,CustomParser<?>> mapParsers) {
@@ -90,7 +91,7 @@ public class CustomParsers {
 	 * Custom parser for Double primitives, or numbers that can become doubles
 	 * @author Mike
 	 */
-	public class DoubleParser extends AbstractCustomParser<Double> {
+	public static class DoubleParser extends AbstractCustomParser<Double> {
 		@Override
 		public Double nextValue(
 				Object firstToken, Parseable pbr) {
@@ -107,7 +108,7 @@ public class CustomParsers {
 	 * Custom parser for Long primitives, or integers that can become longs
 	 * @author Mike
 	 */
-	public class LongParser extends AbstractCustomParser<Long> {
+	public static class LongParser extends AbstractCustomParser<Long> {
 		@Override
 		public Long nextValue(
 				Object firstToken, Parseable pbr) {

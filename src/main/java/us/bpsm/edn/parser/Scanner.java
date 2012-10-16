@@ -22,7 +22,7 @@ import us.bpsm.edn.util.CharClassify;
 
 
 
-class Scanner {
+public class Scanner {
 
     static final Symbol NIL_SYMBOL = newSymbol("nil");
     static final Symbol TRUE_SYMBOL = newSymbol("true");

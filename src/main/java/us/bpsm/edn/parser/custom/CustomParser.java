@@ -7,4 +7,5 @@ public interface CustomParser<T> extends Parser {
 	
 	public T nextValue(Object firstToken, Parseable pbr);
 
+	public T nextValue(Parseable pbr);
 }

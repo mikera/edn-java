@@ -42,7 +42,7 @@ public class Scanner {
      * @param reader
      * @throws IOException
      */
-    Scanner(Parser.Config cfg) {
+    public Scanner(Parser.Config cfg) {
         if (cfg == null) {
             throw new IllegalArgumentException("cfg must not be null");
         }

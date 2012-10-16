@@ -1,6 +1,5 @@
 package us.bpsm.edn.parser.custom;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +91,15 @@ public class CustomParsers {
 	}
 	
 	
-
+	/**
+	 * A custom parser that creates an array of objects.
+	 * 
+	 * Must override the createArray method to construct the array.
+	 * 
+	 * @author Mike
+	 *
+	 * @param <T>
+	 */
 	public static abstract class ArrayParser<T> extends AbstractCustomParser<T[]> {
 		private AbstractCustomParser<?> elementParser;
 
